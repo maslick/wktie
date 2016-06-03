@@ -1,8 +1,18 @@
 group 'com.maslick'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'groovy'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.+'
+    }
+}
+
+
 apply plugin: 'java'
+apply plugin: 'provided-base'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -11,17 +21,20 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile 'junit:junit:4.12'
-    compile 'org.codehaus.groovy:groovy-all:2.3.11'
-    compile fileTree(dir: '.', include: ['*.jar'])
 
-}
+allprojects {
+    dependencies {
+        provided("org.projectlombok:lombok:1.16.8")
+        testCompile 'junit:junit:4.12'
+        compile fileTree(dir: '.', include: ['*.jar'])
+    }
 
-sourceSets {
-    test {
-        java {
-            srcDirs = ["test"]
+    sourceSets {
+        test {
+            java {
+                srcDirs = ["test"]
+            }
         }
     }
 }
+
