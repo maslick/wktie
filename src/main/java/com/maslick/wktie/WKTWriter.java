@@ -14,13 +14,16 @@ public class WKTWriter {
 	 * //returns "LINESTRING (30 10, 10 30, 40 40)"
 	 * </code></pre>
 	 */
-	public static void write(Geometry geom) {
-		String gtype = geom.getClass().getName();
-		System.out.print(geom.getClass().getName());
+	public String write(Geometry geom) {
+		String ret = "";
+		String gtype = geom.getClass().getSimpleName();
 		switch (gtype) {
-			case "Point": System.out.print("The square root of ");
+			case "Point":
+				ret = geom.toString();
+				break;
 
 		}
+		return ret;
 		//TODO: Implement this
 		//return write(new GeometryCollection<Geometry>(new Geometry[]{new Point(4,6), new LineString(new double[] {4,6,7,10})}));
 	}

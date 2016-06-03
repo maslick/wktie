@@ -14,7 +14,24 @@ public class WKTReader {
 	 */
 	public Geometry read(String wktString) {
 		//TODO: Implement this
-		return new Point();
+		Geometry ret=null;
+
+		String geoType = wktString.split(" ")[0];
+		String rest = wktString.substring(wktString.indexOf(' ')+1);
+		String args = rest.split("[\\(\\)]")[1];
+		switch (geoType) {
+			case "POINT":
+				double x = Double.parseDouble(args.split(" ")[0]);
+				double y = Double.parseDouble(args.split(" ")[1]);
+				ret = new Point(x,y);
+				break;
+			case "LINESTRING":
+				break;
+			default:
+				ret=null;
+				break;
+		}
+		return ret;
 	}
 
 }
