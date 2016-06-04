@@ -44,6 +44,38 @@ public class WKTWriter {
 				break;
 
 			case "GeometryCollection":
+				GeometryCollection gc = (GeometryCollection) geom;
+				ret = "GEOMETRYCOLLECTION (";
+				String obj="";
+				for (int i=0; i< gc.size(); i++) {
+					switch (gc.get(i).getClass().getSimpleName()) {
+						case "Point":
+							obj = checkIfEmpty(parsePoint(gc.get(i)), "POINT");
+							break;
+
+						case "LineString":
+							obj = checkIfEmpty(parseLineString(gc.get(i)), "LINESTRING");
+							break;
+
+						case "Polygon":
+							obj = checkIfEmpty(parsePolygon(gc.get(i)), "POLYGON");
+							break;
+
+						case "MultiPoint":
+							obj = checkIfEmpty(parseMultiPoint(gc.get(i)), "MULTIPOINT");
+							break;
+
+						case "MultiLineString":
+							obj = checkIfEmpty(parseMultiLineString(gc.get(i)), "MULTILINESTRING");
+							break;
+
+						case "MultiPolygon":
+							obj = checkIfEmpty(parseMultiPolygon(gc.get(i)), "MULTIPOLYGON");
+							break;
+					}
+					ret += obj + ( i != gc.size()-1 ? "," : "");
+				}
+				ret += ")";
 				break;
 
 		}

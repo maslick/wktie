@@ -29,28 +29,28 @@ public class WKTieTest {
 
     @Test
     public void testingWriterPoint() {
-        Geometry input = new Point(1, 1.123);
+        Point input = new Point(1, 1.123);
         String expected = "POINT (1 1.123)";
         assertEquals(expected, (new WKTWriter()).write(input));
     }
 
     @Test
     public void testingWriterEmptyPoint() {
-        Geometry input = new Point();
+        Point input = new Point();
         String expected = "POINT EMPTY";
         assertEquals(expected, (new WKTWriter()).write(input));
     }
 
     @Test
     public void testingWriterLine() {
-        Geometry input = new LineString(new double[]{30.123, 10, 10, 30, 40, 40});
+        LineString input = new LineString(new double[]{30.123, 10, 10, 30, 40, 40});
         String expected = "LINESTRING (30.123 10, 10 30, 40 40)";
         assertEquals(expected, (new WKTWriter()).write(input));
     }
 
     @Test
     public void testingWriterEmptyLine() {
-        Geometry input = new LineString();
+        LineString input = new LineString();
         String expected = "LINESTRING EMPTY";
         assertEquals(expected, (new WKTWriter()).write(input));
     }
@@ -68,13 +68,13 @@ public class WKTieTest {
     @Test
     public void testingReaderLine() {
         String input = "LINESTRING (11 10, 30 20, 11 12)";
-        Geometry expected = new LineString(new double[] {11,10,30,20,11,12});
+        LineString expected = new LineString(new double[] {11,10,30,20,11,12});
         assertEquals(expected, (new WKTReader().read(input)));
     }
 
     @Test
     public void testingWriterEmptyPolygon() {
-        Geometry input = new Polygon(null, null);
+        Polygon input = new Polygon(null, null);
         String expected = "POLYGON EMPTY";
         assertEquals(expected, new WKTWriter().write(input));
     }
@@ -155,6 +155,15 @@ public class WKTieTest {
         String expected = "MULTIPOLYGON (((11 10, 30 20, 11 12, 11 10),(1 2, 3 4, 5 6, 1 2)),((11 10, 30 20, 11 12, 11 10),(1 2, 3 4, 5 6, 1 2)))";
         MultiPolygon mlp = new MultiPolygon(new Polygon[] { input1, input2 });
         assertEquals(expected, new WKTWriter().write(mlp));
+    }
+
+    @Test
+    public void testingGeometryCollection() {
+        Point p = new Point(4, 6);
+        LineString ls = new LineString(new double[]{4, 6, 7, 10});
+        GeometryCollection gc = new GeometryCollection(new Geometry[] {p,ls});
+        String expected = "GEOMETRYCOLLECTION (POINT (4 6),LINESTRING (4 6, 7 10))";
+        assertEquals(expected, new WKTWriter().write(gc));
     }
 
 
