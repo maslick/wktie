@@ -12,17 +12,6 @@ import static org.junit.Assert.*;
  * Created by maslick on 03/06/16.
  */
 public class WKTieTest {
-    @Test
-    public void testAssertTrue() {
-        assertTrue("failure - should be true", true);
-    }
-
-    @Test
-    public void testingPoint() {
-        Point p = new Point(1, 1);
-        assertEquals(p.toString(), "PT(1.0 1.0)");
-    }
-
 
     @Test
     public void testingReaderPoint() {
@@ -84,11 +73,18 @@ public class WKTieTest {
     }
 
     @Test
+    public void testingWriterEmptyPolygon() {
+        Geometry input = new Polygon(null, null);
+        String expected = "POLYGON EMPTY";
+        assertEquals(expected, new WKTWriter().write(input));
+    }
+
+    @Test
     public void testingWriterPolygon() {
         LineString outer = new LineString(new double[] {11,10,30,20,11,12,11,10});
         LineString[] holes = new LineString[] {new LineString(new double[] {1,2,3,4,5,6,1,2})};
 
-        Geometry input = new Polygon(outer, null);
+        Polygon input = new Polygon(outer, null);
         String expected = "POLYGON ((11 10, 30 20, 11 12, 11 10))";
         assertEquals(expected, new WKTWriter().write(input));
     }
@@ -97,7 +93,7 @@ public class WKTieTest {
     public void testingWriterPolygonWithHoles() {
         LineString outer = new LineString(new double[] {11,10,30,20,11,12,11,10});
         LineString[] holes = new LineString[] {new LineString(new double[] {1,2,3,4,5,6,1,2}), new LineString(new double[] {1,2,3,4,5,6,1,2})};
-        Geometry input = new Polygon(outer, holes);
+        Polygon input = new Polygon(outer, holes);
         String expected = "POLYGON ((11 10, 30 20, 11 12, 11 10),(1 2, 3 4, 5 6, 1 2),(1 2, 3 4, 5 6, 1 2))";
         assertEquals(expected, new WKTWriter().write(input));
     }
@@ -130,7 +126,36 @@ public class WKTieTest {
         assertEquals(expected, new WKTWriter().write(mp));
     }
 
+    @Test
+    public void testingWriterEmptyMultiPolygon() {
+        MultiPolygon mlp = new MultiPolygon();
+        String expected = "MULTIPOLYGON EMPTY";
+        assertEquals(expected, new WKTWriter().write(mlp));
+    }
 
+    @Test
+    public void testingWriterMultiPolygon() {
+        LineString outer = new LineString(new double[] {11,10,30,20,11,12,11,10});
+        LineString[] holes = new LineString[] {new LineString(new double[] {1,2,3,4,5,6,1,2})};
+
+        Polygon input1 = new Polygon(outer, null);
+        Polygon input2 = new Polygon(outer, null);
+        String expected = "MULTIPOLYGON (((11 10, 30 20, 11 12, 11 10)),((11 10, 30 20, 11 12, 11 10)))";
+        MultiPolygon mlp = new MultiPolygon(new Polygon[] { input1, input2 });
+        assertEquals(expected, new WKTWriter().write(mlp));
+    }
+
+    @Test
+    public void testingWriterMultiPolygonWithHoles() {
+        LineString outer = new LineString(new double[] {11,10,30,20,11,12,11,10});
+        LineString[] holes = new LineString[] {new LineString(new double[] {1,2,3,4,5,6,1,2})};
+
+        Polygon input1 = new Polygon(outer, holes);
+        Polygon input2 = new Polygon(outer, holes);
+        String expected = "MULTIPOLYGON (((11 10, 30 20, 11 12, 11 10),(1 2, 3 4, 5 6, 1 2)),((11 10, 30 20, 11 12, 11 10),(1 2, 3 4, 5 6, 1 2)))";
+        MultiPolygon mlp = new MultiPolygon(new Polygon[] { input1, input2 });
+        assertEquals(expected, new WKTWriter().write(mlp));
+    }
 
 
 }

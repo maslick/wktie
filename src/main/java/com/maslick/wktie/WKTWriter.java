@@ -20,26 +20,27 @@ public class WKTWriter {
 
 		switch (gtype) {
 			case "Point":
-				ret = parsePoint(geom);
+				ret = checkIfEmpty(parsePoint(geom), "POINT");
 				break;
 
 			case "LineString":
-				ret = parseLineString(geom);
+				ret = checkIfEmpty(parseLineString(geom), "LINESTRING");
 				break;
 
 			case "Polygon":
-				ret = parsePolygon(geom);
+				ret = checkIfEmpty(parsePolygon(geom), "POLYGON");
 				break;
 
 			case "MultiPoint":
-				ret = parseMultiPoint(geom);
+				ret = checkIfEmpty(parseMultiPoint(geom), "MULTIPOINT");
 				break;
 
 			case "MultiLineString":
-				ret = parseMultiLineString(geom);
+				ret = checkIfEmpty(parseMultiLineString(geom), "MULTILINESTRING");
 				break;
 
 			case "MultiPolygon":
+				ret = checkIfEmpty(parseMultiPolygon(geom), "MULTIPOLYGON");
 				break;
 
 			case "GeometryCollection":
@@ -77,33 +78,35 @@ public class WKTWriter {
 		return ret;
 	}
 
+	// POINT (30 10)
 	public String parsePoint(Geometry geom) {
 		Point p = (Point) geom;
 		if (p.isEmpty()) {
-			return "POINT EMPTY";
+			return "EMPTY";
 		}
-		return "POINT (" + getTupleString(p) + ")";
+		return getTupleString(p);
 	}
 
+	// LINESTRING (30 10, 10 30, 40 40)
 	public String parseLineString(Geometry geom) {
 		LineString ln = (LineString) geom;
 		if (ln.isEmpty()) {
-			return "LINESTRING EMPTY";
+			return "EMPTY";
 		}
-		return "LINESTRING (" + getTupleString(ln) + ")";
+		return getTupleString(ln);
 	}
 
+	// POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))
 	public String parsePolygon(Geometry geom) {
 		Polygon pg = (Polygon) geom;
 		String ret = "";
 		if (pg.isEmpty()) {
-			return "POLYGON EMPTY";
+			return "EMPTY";
 		}
 
-		ret = "POLYGON ((";
+		ret = "(";
 		ret += getTupleString(pg.getOuter());
 		ret += ")";
-
 		if (pg.getNumHoles() > 0) {
 			ret += ",";
 			for (int i=0; i<pg.getNumHoles(); i++) {
@@ -113,31 +116,53 @@ public class WKTWriter {
 			}
 		}
 
-		ret += ")";
 		return ret;
 	}
 
+	// MULTIPOINT (10 40, 40 30, 20 20, 30 10)
 	public String parseMultiPoint(Geometry geom) {
 		MultiPoint mp = (MultiPoint) geom;
 		String ret = "";
 		if (mp.isEmpty()) {
-			return "MULTIPOINT EMPTY";
+			return "EMPTY";
 		}
 		for (int i = 0; i<mp.size(); i++) {
-			ret += getTupleString(mp.get(i)) + ( i != mp.size()-1 ? ", " : "" );
+			ret += parsePoint(mp.get(i)) + ( i != mp.size()-1 ? ", " : "" );
 		}
-		return "MULTIPOINT (" + ret + ")";
+		return ret;
 	}
 
+	// MULTILINESTRING ((10 10, 20 20, 10 40),(40 40, 30 30, 40 20, 30 10))
 	public String parseMultiLineString(Geometry geom) {
 		MultiLineString mls = (MultiLineString) geom;
 		String ret = "";
 		if (mls.isEmpty()) {
-			return "MULTILINESTRING EMPTY";
+			return "EMPTY";
 		}
 		for (int i = 0; i<mls.size(); i++) {
-			ret += "(" + getTupleString(mls.get(i)) + ( i != mls.size()-1 ? ")," : ")" );
+			ret += "(" + parseLineString(mls.get(i)) + ( i != mls.size()-1 ? ")," : ")" );
 		}
-		return "MULTILINESTRING (" + ret + ")";
+		return ret;
+	}
+
+	// MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))
+	public String parseMultiPolygon(Geometry geom) {
+		MultiPolygon mlp = (MultiPolygon) geom;
+		String ret = "";
+		if (mlp.isEmpty()) {
+			return "EMPTY";
+		}
+		for (int i = 0; i<mlp.size(); i++) {
+			ret += "(" + parsePolygon(mlp.get(i)) + ( i != mlp.size()-1 ? ")," : ")" );
+		}
+		return ret;
+	}
+
+	public String checkIfEmpty(String strToCheck, String type) {
+		if (strToCheck.equals("EMPTY")) {
+			return type + " " + strToCheck;
+		}
+		else
+			return type + " (" + strToCheck + ")";
 	}
 }
