@@ -20,49 +20,33 @@ public class WKTWriter {
 	public String write(Geometry geom) {
 		String ret = "";
 		String gtype = geom.getClass().getSimpleName();
+
 		switch (gtype) {
 			case "Point":
-				Point p = (Point) geom;
-				if (p.isEmpty()) {
-					ret = "POINT EMPTY";
-				}
-				else {
-					ret = "POINT (" + fmt(p.getX()) + " " + fmt(p.getY()) + ")";
-				}
+				ret = parsePoint(geom);
 				break;
 
 			case "LineString":
-				LineString ln = (LineString) geom;
-				if (ln.isEmpty()) {
-					ret = "LINESTRING EMPTY";
-				}
-				else {
-					ret = "LINESTRING (" + getTupleString(ln) + ")";
-				}
+				ret = parseLineString(geom);
 				break;
 
 			case "Polygon":
-				Polygon pg = (Polygon) geom;
-				if (pg.isEmpty()) {
-					ret = "POLYGON EMPTY";
-				}
-				else {
-					ret = "POLYGON ((";
-					ret += getTupleString(pg.getOuter());
-					ret += ")";
-
-					if (pg.getNumHoles() > 0) {
-						ret += ",";
-						for (int i=0; i<pg.getNumHoles(); i++) {
-							ret += "(";
-							ret += getTupleString(pg.getHole(i));
-							ret += ")" + (i!=pg.getNumHoles()-1?",":"");
-						}
-					}
-
-					ret += ")";
-				}
+				ret = parsePolygon(geom);
 				break;
+
+			case "MultiPoint":
+
+				break;
+
+			case "MultiLineString":
+				break;
+
+			case "MultiPolygon":
+				break;
+
+			case "GeometryCollection":
+				break;
+
 		}
 		return ret;
 		//TODO: Implement this
@@ -82,6 +66,55 @@ public class WKTWriter {
 		int len = ln.getNumCoords();
 		for (int i=0; i<len; i++ ) {
 			ret += fmt(ln.getX(i)) + " " + fmt(ln.getY(i)) + (i!=len-1?", ":"");
+		}
+		return ret;
+	}
+
+	public String parsePoint(Geometry geom) {
+		Point p = (Point) geom;
+		String ret = "";
+		if (p.isEmpty()) {
+			ret = "POINT EMPTY";
+		}
+		else {
+			ret = "POINT (" + fmt(p.getX()) + " " + fmt(p.getY()) + ")";
+		}
+		return  ret;
+	}
+
+	public String parseLineString(Geometry geom) {
+		LineString ln = (LineString) geom;
+		String ret = "";
+		if (ln.isEmpty()) {
+			ret = "LINESTRING EMPTY";
+		}
+		else {
+			ret = "LINESTRING (" + getTupleString(ln) + ")";
+		}
+		return ret;
+	}
+
+	public String parsePolygon(Geometry geom) {
+		Polygon pg = (Polygon) geom;
+		String ret = "";
+		if (pg.isEmpty()) {
+			ret = "POLYGON EMPTY";
+		}
+		else {
+			ret = "POLYGON ((";
+			ret += getTupleString(pg.getOuter());
+			ret += ")";
+
+			if (pg.getNumHoles() > 0) {
+				ret += ",";
+				for (int i=0; i<pg.getNumHoles(); i++) {
+					ret += "(";
+					ret += getTupleString(pg.getHole(i));
+					ret += ")" + (i!=pg.getNumHoles()-1?",":"");
+				}
+			}
+
+			ret += ")";
 		}
 		return ret;
 	}

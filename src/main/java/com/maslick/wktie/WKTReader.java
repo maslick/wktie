@@ -42,6 +42,21 @@ public class WKTReader {
 					ret = new LineString(parseArgsDouble(args));
 				}
 				break;
+			case "POLYGON":
+				break;
+
+			case "MULTIPOINT":
+				break;
+
+			case "MULTILINESTRING":
+				break;
+
+			case "MULTIPOLYGON":
+				break;
+
+			case "GeometryCollection":
+				break;
+
 			default:
 				ret=null;
 				break;
