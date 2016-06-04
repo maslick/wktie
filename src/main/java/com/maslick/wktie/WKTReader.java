@@ -1,13 +1,12 @@
 package com.maslick.wktie;
 
 import com.sinergise.geometry.Geometry;
-import com.sinergise.geometry.GeometryCollection;
 import com.sinergise.geometry.LineString;
 import com.sinergise.geometry.Point;
 import lombok.*;
 
 import java.util.ArrayList;
-
+import java.util.*;
 
 public class WKTReader {
 
@@ -40,10 +39,7 @@ public class WKTReader {
 				if (rest.equals("EMPTY"))
 					ret = new LineString();
 				else {
-					ArrayList<Tuple> list = parseArgs(args);
-					for (int i=0; i<list.size(); i ++) {
-
-					}
+					ret = new LineString(parseArgsDouble(args));
 				}
 				break;
 			default:
@@ -70,9 +66,29 @@ public class WKTReader {
 			splitBySpace = splitByComma[i].split(" ");
 			list.add(new Tuple(Double.parseDouble(splitBySpace[0]),Double.parseDouble(splitBySpace[1])));
 		}
-
 		return list;
 	}
+
+	public double[] parseArgsDouble(String str) {
+		String[] splitByComma = str.split(", ");
+		String[] splitBySpace;
+		ArrayList<Double> list = new ArrayList<>();
+		for (int i=0; i<splitByComma.length; i++) {
+			splitByComma[i] = splitByComma[i].trim();
+			splitBySpace = splitByComma[i].split(" ");
+			list.add(Double.parseDouble(splitBySpace[0]));
+			list.add(Double.parseDouble(splitBySpace[1]));
+		}
+		double[] ret = new double[list.size()];
+		Iterator<Double> iterator = list.iterator();
+		int i = 0;
+		while(iterator.hasNext()) {
+			ret[i] = iterator.next();
+			i++;
+		}
+		return ret;
+	}
+
 
 
 	@Data

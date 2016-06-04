@@ -4,6 +4,7 @@ package com.maslick.wktie;
 import com.sinergise.geometry.Geometry;
 import com.sinergise.geometry.LineString;
 import com.sinergise.geometry.Point;
+import com.sinergise.geometry.Polygon;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -76,5 +77,31 @@ public class WKTieTest {
         for (int i=0; i<list.size(); i ++) {
             System.out.println(list.get(i).getX() + " " + list.get(i).getY());
         }
+    }
+
+    @Test
+    public void testingReaderLine() {
+        String input = "LINESTRING (11 10, 30 20, 11 12)";
+        Geometry expected = new LineString(new double[] {11,10,30,20,11,12});
+        assertEquals(expected, (new WKTReader().read(input)));
+    }
+
+    @Test
+    public void testingWriterPolygon() {
+        LineString outer = new LineString(new double[] {11,10,30,20,11,12,11,10});
+        LineString[] holes = new LineString[] {new LineString(new double[] {1,2,3,4,5,6,1,2})};
+
+        Geometry input = new Polygon(outer, null);
+        String expected = "POLYGON ((11 10, 30 20, 11 12, 11 10))";
+        assertEquals(expected, new WKTWriter().write(input));
+    }
+
+    @Test
+    public void testingWriterPolygonWithHoles() {
+        LineString outer = new LineString(new double[] {11,10,30,20,11,12,11,10});
+        LineString[] holes = new LineString[] {new LineString(new double[] {1,2,3,4,5,6,1,2}), new LineString(new double[] {1,2,3,4,5,6,1,2})};
+        Geometry input = new Polygon(outer, holes);
+        String expected = "POLYGON ((11 10, 30 20, 11 12, 11 10),(1 2, 3 4, 5 6, 1 2),(1 2, 3 4, 5 6, 1 2))";
+        assertEquals(expected, new WKTWriter().write(input));
     }
 }

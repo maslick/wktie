@@ -1,9 +1,10 @@
 package com.maslick.wktie;
 
 import com.sinergise.geometry.Geometry;
-import com.sinergise.geometry.GeometryCollection;
 import com.sinergise.geometry.LineString;
 import com.sinergise.geometry.Point;
+import com.sinergise.geometry.Polygon;
+
 
 import java.util.Arrays;
 
@@ -36,10 +37,29 @@ public class WKTWriter {
 					ret = "LINESTRING EMPTY";
 				}
 				else {
-					ret = "LINESTRING (";
-					for(int i=0; i<ln.getNumCoords(); i++) {
-						ret += fmt(ln.getX(i)) + " " + fmt(ln.getY(i)) + (i!=ln.getNumCoords()-1?", ":"");
+					ret = "LINESTRING (" + getTupleString(ln) + ")";
+				}
+				break;
+
+			case "Polygon":
+				Polygon pg = (Polygon) geom;
+				if (pg.isEmpty()) {
+					ret = "POLYGON EMPTY";
+				}
+				else {
+					ret = "POLYGON ((";
+					ret += getTupleString(pg.getOuter());
+					ret += ")";
+
+					if (pg.getNumHoles() > 0) {
+						ret += ",";
+						for (int i=0; i<pg.getNumHoles(); i++) {
+							ret += "(";
+							ret += getTupleString(pg.getHole(i));
+							ret += ")" + (i!=pg.getNumHoles()-1?",":"");
+						}
 					}
+
 					ret += ")";
 				}
 				break;
@@ -55,5 +75,14 @@ public class WKTWriter {
 			return String.format("%d",(long)d);
 		else
 			return String.format("%s",d);
+	}
+
+	public String getTupleString(LineString ln) {
+		String ret = "";
+		int len = ln.getNumCoords();
+		for (int i=0; i<len; i++ ) {
+			ret += fmt(ln.getX(i)) + " " + fmt(ln.getY(i)) + (i!=len-1?", ":"");
+		}
+		return ret;
 	}
 }
