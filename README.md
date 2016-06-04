@@ -1,0 +1,7 @@
+# wktie
+
+Run 
+
+```
+$ ./gradlew test
+```
