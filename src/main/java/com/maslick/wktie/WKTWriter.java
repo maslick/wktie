@@ -1,9 +1,6 @@
 package com.maslick.wktie;
 
-import com.sinergise.geometry.Geometry;
-import com.sinergise.geometry.LineString;
-import com.sinergise.geometry.Point;
-import com.sinergise.geometry.Polygon;
+import com.sinergise.geometry.*;
 
 
 import java.util.Arrays;
@@ -61,60 +58,69 @@ public class WKTWriter {
 			return String.format("%s",d);
 	}
 
-	public String getTupleString(LineString ln) {
+	public String getTupleString(Geometry geom) {
 		String ret = "";
-		int len = ln.getNumCoords();
-		for (int i=0; i<len; i++ ) {
-			ret += fmt(ln.getX(i)) + " " + fmt(ln.getY(i)) + (i!=len-1?", ":"");
+		switch (geom.getClass().getSimpleName()) {
+			case "Point":
+				Point p = (Point) geom;
+				ret = fmt(p.getX()) + " " + fmt(p.getY());
+				break;
+			case "LineString":
+				LineString ln = (LineString) geom;
+				int len = ln.getNumCoords();
+				for (int i=0; i<len; i++ ) {
+					ret += fmt(ln.getX(i)) + " " + fmt(ln.getY(i)) + (i!=len-1?", ":"");
+				}
+				break;
 		}
 		return ret;
 	}
 
 	public String parsePoint(Geometry geom) {
 		Point p = (Point) geom;
-		String ret = "";
 		if (p.isEmpty()) {
-			ret = "POINT EMPTY";
+			return "POINT EMPTY";
 		}
-		else {
-			ret = "POINT (" + fmt(p.getX()) + " " + fmt(p.getY()) + ")";
-		}
-		return  ret;
+		return "POINT (" + getTupleString(p) + ")";
 	}
 
 	public String parseLineString(Geometry geom) {
 		LineString ln = (LineString) geom;
-		String ret = "";
 		if (ln.isEmpty()) {
-			ret = "LINESTRING EMPTY";
+			return "LINESTRING EMPTY";
 		}
-		else {
-			ret = "LINESTRING (" + getTupleString(ln) + ")";
-		}
-		return ret;
+		return "LINESTRING (" + getTupleString(ln) + ")";
 	}
 
 	public String parsePolygon(Geometry geom) {
 		Polygon pg = (Polygon) geom;
 		String ret = "";
 		if (pg.isEmpty()) {
-			ret = "POLYGON EMPTY";
+			return "POLYGON EMPTY";
 		}
-		else {
-			ret = "POLYGON ((";
-			ret += getTupleString(pg.getOuter());
-			ret += ")";
 
-			if (pg.getNumHoles() > 0) {
-				ret += ",";
-				for (int i=0; i<pg.getNumHoles(); i++) {
-					ret += "(";
-					ret += getTupleString(pg.getHole(i));
-					ret += ")" + (i!=pg.getNumHoles()-1?",":"");
-				}
+		ret = "POLYGON ((";
+		ret += getTupleString(pg.getOuter());
+		ret += ")";
+
+		if (pg.getNumHoles() > 0) {
+			ret += ",";
+			for (int i=0; i<pg.getNumHoles(); i++) {
+				ret += "(";
+				ret += getTupleString(pg.getHole(i));
+				ret += ")" + (i!=pg.getNumHoles()-1?",":"");
 			}
+		}
 
-			ret += ")";
+		ret += ")";
+		return ret;
+	}
+
+	public String parseMultiPoint(Geometry geom) {
+		MultiPoint mp = (MultiPoint) geom;
+		String ret = "";
+		if (mp.isEmpty()) {
+			return "MULTIPOINT EMPTY";
 		}
 		return ret;
 	}
