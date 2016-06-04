@@ -1,10 +1,7 @@
 package com.maslick.wktie;
 
 
-import com.sinergise.geometry.Geometry;
-import com.sinergise.geometry.LineString;
-import com.sinergise.geometry.Point;
-import com.sinergise.geometry.Polygon;
+import com.sinergise.geometry.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -104,4 +101,36 @@ public class WKTieTest {
         String expected = "POLYGON ((11 10, 30 20, 11 12, 11 10),(1 2, 3 4, 5 6, 1 2),(1 2, 3 4, 5 6, 1 2))";
         assertEquals(expected, new WKTWriter().write(input));
     }
+
+    @Test
+    public void testingWriterEmptyMultiPoint() {
+        MultiPoint mp = new MultiPoint();
+        String expected = "MULTIPOINT EMPTY";
+        assertEquals(expected, new WKTWriter().write(mp));
+    }
+
+    @Test
+    public void testingWriterMultiPoint() {
+        MultiPoint mp = new MultiPoint(new Point[] {new Point(1,2), new Point(3,4)});
+        String expected = "MULTIPOINT (1 2, 3 4)";
+        assertEquals(expected, new WKTWriter().write(mp));
+    }
+
+    @Test
+    public void testingWriterEmptyMultiLineString() {
+        MultiLineString mp = new MultiLineString();
+        String expected = "MULTILINESTRING EMPTY";
+        assertEquals(expected, new WKTWriter().write(mp));
+    }
+
+    @Test
+    public void testingWriterMultiLineString() {
+        MultiLineString mp = new MultiLineString(new LineString[] {new LineString(new double[]{1,2}), new LineString(new double[]{3,4})});
+        String expected = "MULTILINESTRING ((1 2),(3 4))";
+        assertEquals(expected, new WKTWriter().write(mp));
+    }
+
+
+
+
 }

@@ -32,10 +32,11 @@ public class WKTWriter {
 				break;
 
 			case "MultiPoint":
-
+				ret = parseMultiPoint(geom);
 				break;
 
 			case "MultiLineString":
+				ret = parseMultiLineString(geom);
 				break;
 
 			case "MultiPolygon":
@@ -108,7 +109,7 @@ public class WKTWriter {
 			for (int i=0; i<pg.getNumHoles(); i++) {
 				ret += "(";
 				ret += getTupleString(pg.getHole(i));
-				ret += ")" + (i!=pg.getNumHoles()-1?",":"");
+				ret += ")" + ( i != pg.getNumHoles()-1 ? "," : "");
 			}
 		}
 
@@ -122,6 +123,21 @@ public class WKTWriter {
 		if (mp.isEmpty()) {
 			return "MULTIPOINT EMPTY";
 		}
-		return ret;
+		for (int i = 0; i<mp.size(); i++) {
+			ret += getTupleString(mp.get(i)) + ( i != mp.size()-1 ? ", " : "" );
+		}
+		return "MULTIPOINT (" + ret + ")";
+	}
+
+	public String parseMultiLineString(Geometry geom) {
+		MultiLineString mls = (MultiLineString) geom;
+		String ret = "";
+		if (mls.isEmpty()) {
+			return "MULTILINESTRING EMPTY";
+		}
+		for (int i = 0; i<mls.size(); i++) {
+			ret += "(" + getTupleString(mls.get(i)) + ( i != mls.size()-1 ? ")," : ")" );
+		}
+		return "MULTILINESTRING (" + ret + ")";
 	}
 }
