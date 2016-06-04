@@ -3,7 +3,6 @@ package com.maslick.wktie;
 import com.sinergise.geometry.Geometry;
 import com.sinergise.geometry.LineString;
 import com.sinergise.geometry.Point;
-import lombok.*;
 
 import java.util.ArrayList;
 import java.util.*;
@@ -31,7 +30,7 @@ public class WKTReader {
 				if (rest.equals("EMPTY"))
 					ret = new Point();
 				else {
-					Tuple t = parseArgs(args).get(0);
+					Coordinate t = parseArgs(args).get(0);
 					ret = new Point(t.getX(),t.getY());
 				}
 				break;
@@ -72,14 +71,14 @@ public class WKTReader {
 		return str.substring(str.indexOf(' ') + 1).split("[\\(\\)]")[1];
 	}
 
-	public ArrayList<Tuple> parseArgs(String str) {
+	public ArrayList<Coordinate> parseArgs(String str) {
 		String[] splitByComma = str.split(", ");
 		String[] splitBySpace;
-		ArrayList<Tuple> list = new ArrayList<>();
+		ArrayList<Coordinate> list = new ArrayList<>();
 		for (int i=0; i<splitByComma.length; i++) {
 			splitByComma[i] = splitByComma[i].trim();
 			splitBySpace = splitByComma[i].split(" ");
-			list.add(new Tuple(Double.parseDouble(splitBySpace[0]),Double.parseDouble(splitBySpace[1])));
+			list.add(new Coordinate(Double.parseDouble(splitBySpace[0]),Double.parseDouble(splitBySpace[1])));
 		}
 		return list;
 	}
@@ -102,16 +101,6 @@ public class WKTReader {
 			i++;
 		}
 		return ret;
-	}
-
-
-
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public class Tuple {
-		double x;
-		double y;
 	}
 
 }

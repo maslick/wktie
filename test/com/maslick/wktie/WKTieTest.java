@@ -73,7 +73,7 @@ public class WKTieTest {
     public void testingTuple() {
         WKTReader r = new WKTReader();
         String expected = "30.123 10, 10 30, 40 40";
-        ArrayList<WKTReader.Tuple> list = r.parseArgs(expected);
+        ArrayList<Coordinate> list = r.parseArgs(expected);
         for (int i=0; i<list.size(); i ++) {
             System.out.println(list.get(i).getX() + " " + list.get(i).getY());
         }
