@@ -3,8 +3,6 @@ package com.maslick.wktie;
 import com.sinergise.geometry.*;
 
 
-import java.util.Arrays;
-
 public class WKTWriter {
 
     /**
@@ -76,8 +74,6 @@ public class WKTWriter {
 
         }
         return ret;
-        //TODO: Implement this
-        //return write(new GeometryCollection<Geometry>(new Geometry[]{new Point(4,6), new LineString(new double[] {4,6,7,10})}));
     }
 
 

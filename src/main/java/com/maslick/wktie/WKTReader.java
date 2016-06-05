@@ -45,11 +45,13 @@ public class WKTReader {
     private Geometry readGeometry() throws IOException, ParseException {
         String type = null;
 
-        try{
+        try {
             type = getNextWord();
-        }catch(IOException e){
+        }
+        catch (IOException e) {
             return null;
-        }catch(ParseException e){
+        }
+        catch(ParseException e) {
             return null;
         }
 
@@ -77,31 +79,9 @@ public class WKTReader {
         throw new ParseException("Unknown geometry type: " + type,0);
     }
 
-    private Coordinate getPreciseCoordinate()
-            throws IOException, ParseException
-    {
-        Coordinate coord = new Coordinate();
-        coord.x = getNextNumber();
-        coord.y = getNextNumber();
-        return coord;
-    }
-
-    private Coordinate[] getCoordinates() throws IOException, ParseException {
-        String nextToken = getNextEmptyOrOpener();
-        if (nextToken.equals(EMPTY)) {
-            return new Coordinate[]{};
-        }
-        ArrayList coordinates = new ArrayList();
-        coordinates.add(getPreciseCoordinate());
-        nextToken = getNextCloserOrComma();
-        while (nextToken.equals(COMMA)) {
-            coordinates.add(getPreciseCoordinate());
-            nextToken = getNextCloserOrComma();
-        }
-        Coordinate[] array = new Coordinate[coordinates.size()];
-        return (Coordinate[]) coordinates.toArray(array);
-    }
-
+    // ************************
+    // Parsing general types
+    // ************************
     private Point readPointText() throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener();
         if (nextToken.equals(EMPTY)) {
@@ -230,6 +210,46 @@ public class WKTReader {
         return new GeometryCollection(array);
     }
 
+    // ************************
+    // Getting coordinate tuples
+    // ************************
+    private Coordinate getPreciseCoordinate()
+            throws IOException, ParseException
+    {
+        Coordinate coord = new Coordinate();
+        coord.x = getNextNumber();
+        coord.y = getNextNumber();
+        return coord;
+    }
+
+    private Coordinate[] getCoordinates() throws IOException, ParseException {
+        String nextToken = getNextEmptyOrOpener();
+        if (nextToken.equals(EMPTY)) {
+            return new Coordinate[]{};
+        }
+        ArrayList coordinates = new ArrayList();
+        coordinates.add(getPreciseCoordinate());
+        nextToken = getNextCloserOrComma();
+        while (nextToken.equals(COMMA)) {
+            coordinates.add(getPreciseCoordinate());
+            nextToken = getNextCloserOrComma();
+        }
+        Coordinate[] array = new Coordinate[coordinates.size()];
+        return (Coordinate[]) coordinates.toArray(array);
+    }
+
+    // ************************
+    // Helper methods (parsing)
+    // ************************
+    private String getNextEmptyOrOpener() throws IOException, ParseException {
+        String nextWord = getNextWord();
+        if (nextWord.equals(EMPTY) || nextWord.equals(L_PAREN)) {
+            return nextWord;
+        }
+        parseError(EMPTY + " or " + L_PAREN);
+        return null;
+    }
+
     private String getNextWord() throws IOException, ParseException {
         int type = tokenizer.nextToken();
         String value;
@@ -312,14 +332,5 @@ public class WKTReader {
             default:
         }
         return "'" + (char) tokenizer.ttype + "'";
-    }
-
-    private String getNextEmptyOrOpener() throws IOException, ParseException {
-        String nextWord = getNextWord();
-        if (nextWord.equals(EMPTY) || nextWord.equals(L_PAREN)) {
-            return nextWord;
-        }
-        parseError(EMPTY + " or " + L_PAREN);
-        return null;
     }
 }
