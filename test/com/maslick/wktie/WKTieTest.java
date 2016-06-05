@@ -147,4 +147,10 @@ public class WKTieTest {
         assertEquals(expected, new WKTWriter().write(input));
         assertEquals(input, new WKTReader().read(expected));
     }
+
+    @Test(expected=ParseException.class)
+    public void testingParseException()  throws IOException, ParseException {
+        String erroneousWktString = "POINT (1, 6)";
+        Point p = (Point) new WKTReader().read(erroneousWktString);
+    }
 }
