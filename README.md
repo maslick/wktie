@@ -23,5 +23,5 @@ String wktString = new WKTWriter().write(new Point(1,1));
 
 - Reader (parses a WKT string into a Geometry object)
 ```
-Point = new WKTReader().read("POINT (1 1)");
+Point p = new WKTReader().read("POINT (1 1)");
 ```
